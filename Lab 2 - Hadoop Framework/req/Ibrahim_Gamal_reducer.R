@@ -1,7 +1,7 @@
 #! /usr/bin/env Rscript
 
 #Sara Gamal Gerges 9210455
-#Eman Ibrahim  9210265
+#Eman Ibrahim Elbedwihy  9210265
 
 trimWhiteSpace <- function(line) gsub("(^ +)|( +$)", "", line)
 

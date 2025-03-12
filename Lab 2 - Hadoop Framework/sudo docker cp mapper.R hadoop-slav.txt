@@ -1,0 +1,25 @@
+sudo docker cp mapper.R hadoop-slave1:/tmp/mapper.R
+sudo docker cp reducer.R hadoop-master:/tmp/reducer.R
+sudo docker cp in.csv hadoop-master:/tmp/in.csv
+hadoop fs -copyFromLocal /tmp/input.txt /input
+
+
+hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+-D mapreduce.job.reduces=1 \
+-input /tmp/in.csv \
+-output /tmp/output \
+-mapper /tmp/mapper.R \
+-reducer /tmp/reducer.R
+
+
+hadoop fs -rm -r /tmp/output
+
+
+docker exec -it hadoop-slave2 bash
+apt update && apt install -y r-base
+exit
+echo -e "1 ,100\n2 ,200\n1 ,150\n3 ,300\n2, 100" | Rscript /tmp/mapper.R
+cat sample_input.txt | Rscript /tmp/mapper.R
+echo -e "1 ,100\n2 ,200\n1 ,150\n3 ,300\n2, 100" | Rscript /tmp/mapper.R | sort | Rscript /tmp/reducer.R
+Rscript /tmp/mapper.R < /tmp/in.csv
+Rscript /tmp/reducer.R < sample_output_from_mapper.txt
